@@ -1,0 +1,2 @@
+# netdata-apt - count number of availabe upgrades after dpkg operations
+DPkg::Post-Invoke {"/usr/bin/apt list --upgradeable 2>&1 > /var/log/netdata-apt.log || true"; };
