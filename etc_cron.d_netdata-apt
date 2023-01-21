@@ -1,1 +1,0 @@
-0,30 * * * * netdata /usr/bin/apt list --upgradeable 2>/dev/null > /var/log/netdata/netdata-apt.log

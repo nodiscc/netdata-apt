@@ -4,14 +4,14 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
-import re
+import apt
 
 from bases.FrameworkServices.SimpleService import SimpleService
 
 priority = 90000
 update_every = 120
 
-ORDER = ['upgradeable', 'distribution_version']
+ORDER = ['upgradable', 'distribution_version']
 
 # CHARTS = {
 #     id: {
@@ -20,20 +20,19 @@ ORDER = ['upgradeable', 'distribution_version']
 #             [unique_dimension_name, name, algorithm, multiplier, divisor]
 #         ]}
 CHARTS = {
-    'upgradeable': {
-        'options': [None, 'Upgradeable packages', 'packages', 'apt', 'apt.upgradeable', 'stacked'],
+    'upgradable': {
+        'options': [None, 'upgradable packages', 'packages', 'apt', 'apt.upgradable', 'stacked'],
         'lines': [
-            ['packages', None, 'absolute'],
-            ['upgradeable_packages_error', None, 'stacked'],
+            ['upgradable', None, 'absolute']
         ]
     },
     'distribution_version': {
-        'options': [None, 'Distribution version', None, 'apt', 'apt.distribution_version', 'line'],
+        'options': [None, None, None, 'apt', 'apt.distribution_version', 'line'],
         'lines': [
-            ['version', None, 'absolute'],
-            ['distribution_version_error', None, 'stacked'],
+            ['distribution_version', None, 'absolute'],
+            ['distribution_version_error', None, 'absolute']
         ]
-    },
+    }
 }
 
 class Service(SimpleService):
@@ -41,46 +40,33 @@ class Service(SimpleService):
         SimpleService.__init__(self, configuration=configuration, name=name)
         self.order = ORDER
         self.definitions = CHARTS
-        self.upgradeable_count_file = '/var/log/netdata/netdata-apt.log'
+        self.data = dict()
         self.distribution_version_file = '/etc/debian_version'
         self.distribution_version_file_modtime = ''
-        self.upgradeable_count_file_modtime = ''
-        ############ TODO #############
-        ######### https://github.com/netdata/netdata/blob/master/collectors/python.d.plugin/openldap/openldap.chart.py
+        self.data['upgradable'] = 0
+        self.data['distribution_version_error'] = 0
+        self.data['distribution_version'] = 0
 
     def check(self):
         return self.get_data()
 
     def get_data(self):
-        self.data = dict()
-        self.data['upgradeable_packages_error'] = 0
-        self.data['distribution_version_error'] = 0
-        if not is_readable(self.upgradeable_count_file) or is_empty(self.upgradeable_count_file):
-            self.debug("{0} is unreadable or empty".format(self.upgradeable_count_file))
-            self.data['upgradeable_packages_error'] = 1
+        upgradable_packages_count = 0
+        for pkg in apt.Cache():
+            if pkg.is_upgradable:
+                upgradable_packages_count = upgradable_packages_count + 1
+        self.data['upgradable'] = upgradable_packages_count
         if not is_readable(self.distribution_version_file) or is_empty(self.distribution_version_file):
             self.debug("{0} is unreadable or empty".format(self.distribution_version_file))
             self.data['distribution_version_error'] = 1
-
-        if self.upgradeable_count_file_modtime == os.path.getmtime(self.upgradeable_count_file):
-            self.debug("{0} upgradeable_count_file modification time unchanged, returning previous values".format(self.upgradeable_count_file))
-            return self.data
-        else:
-            with open(self.upgradeable_count_file, 'r') as file:
-                self.upgradeable_count_file_modtime = os.path.getmtime(self.upgradeable_count_file)
-                firstline = file.readline().rstrip()
-                self.data['upgradeable'] = firstline
-            print('DEBUG ' + str(self.data))
-
         if self.distribution_version_file_modtime == os.path.getmtime(self.distribution_version_file):
             self.debug("{0} distribution_version_file modification time unchanged, returning previous values".format(self.distribution_version_file))
+            self.data['distribution_version'] = self.data['distribution_version']
         else:
             with open(self.distribution_version_file, 'r') as file:
                 self.distribution_version_file_modtime = os.path.getmtime(self.distribution_version_file)
                 firstline = file.readline().rstrip()
-                self.data['distribution_version'] = firstline
-            print('DEBUG ' + str(self.data))
-
+                self.data['distribution_version'] = int(float(firstline))
         return self.data
 
 def is_readable(path):
