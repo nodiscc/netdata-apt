@@ -1,6 +1,6 @@
 # netdata-apt
 
-![](https://i.imgur.com/QS3AbE3.png)
+![](https://gitlab.com/nodiscc/toolbox/-/raw/master/DOC/SCREENSHOTS/QS3AbE3.png)
 
 This is a `python.d` plugin for [netdata](https://my-netdata.io/). It parses output from [python3-apt](https://manpages.debian.org/bullseye/apt/apt.8.en.html) and the `/etc/debian_version` file. It provides charts/alarms for:
 - Number of upgradable packages: when no package upgrades are available, the `upgradable` chart will have a value of 0. A value constantly higher than 0, for a time longer than 24 hours, will raise a netdata alarm/notification.
