@@ -4,7 +4,7 @@
 
 This is a `python.d` plugin for [netdata](https://my-netdata.io/). It parses output from [python3-apt](https://manpages.debian.org/bullseye/apt/apt.8.en.html) and the `/etc/debian_version` file. It provides charts/alarms for:
 - Number of upgradable packages: when no package upgrades are available, the `upgradable` chart will have a value of 0. A value constantly higher than 0, for a time longer than 24 hours, will raise a netdata alarm/notification.
-- The current distribution version: if the version (eg. `10`) is inferior to the configured/expected version (eg `11`), a netdata alarm/notification will be raised.
+- The current distribution version: if the version (eg. `10`) is inferior to the configured/expected version (eg `12`), a netdata alarm/notification will be raised.
 
 
 ## Installation
@@ -27,7 +27,7 @@ sudo systemctl restart netdata
 
 ## Configuration
 
-- If needed, change the expected distribution version in `etc_netdata_health.d_apt.conf` (the default is to expect Debian `11`).
+- If needed, change the expected distribution version in `etc_netdata_health.d_apt.conf` (the default is to expect Debian `12`).
 - If needed, change the duration for which available upgrades can be `> 0` without trigerring an alarm in `etc_netdata_health.d_apt.conf` (`lookup:` setting). By default a warning will only be raised if the number of available upgrades is `> 0` for one day.
 - The default `update every` value in `etc_netdata_python.d_apt.conf` is 600 seconds, so charts/alarms will only be created/updated after 600 seconds. Change this value if you need more accuracy.
 - Common `python.d` plugin options can be changed in [`etc_netdata_python.d_apt.conf`](etc_netdata_python.d_apt.conf).
@@ -38,7 +38,7 @@ You can get details on which packages need to be upgraded by running `apt list -
 
 This plugin assumes that a separate program (such as [unattended-upgrades](https://wiki.debian.org/UnattendedUpgrades)) updates the package lists (`apt update`) periodically for up-to-date information on available packages/versions. `unattended-upgrades` can fully automate security upgrades, but some packages may not be upgraded automatically (e.g. if you don't want to, or forgot to enable a repository in `Unattended-Upgrade::Origins-Pattern` in unattended-upgrades configuration).
 
-Distribution upgrades (e.g. from Debian 10 to 11) should follow the [recommended procedure](https://debian-handbook.info/browse/stable/sect.dist-upgrade.html).
+Distribution upgrades (e.g. from Debian 10 to 11, or 11 to 12) should follow the [recommended procedure](https://debian-handbook.info/browse/stable/sect.dist-upgrade.html).
 
 
 
