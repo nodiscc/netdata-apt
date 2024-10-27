@@ -66,7 +66,17 @@ class Service(SimpleService):
             with open(self.distribution_version_file, 'r') as file:
                 self.distribution_version_file_modtime = os.path.getmtime(self.distribution_version_file)
                 firstline = file.readline().rstrip()
-                self.data['distribution_version'] = int(float(firstline))
+                try:
+                    self.data['distribution_version'] = int(float(firstline))
+                except ValueError:
+                    # on ubuntu 22 /etc/debian_version only contains "bookworm/sid"
+                    # using the same method on debian would have been nice but the lsb_release python module is not provided
+                    import lsb_release
+                    try:
+                        self.data['distribution_version'] = int(float(lsb_release.get_os_release()['RELEASE']))
+                    except AttributeError:
+                        # ubuntu 18, module 'lsb_release' has no attribute 'get_os_release'
+                        self.data['distribution_version'] = int(float(lsb_release.get_distor_information()['RELEASE']))
         return self.data
 
 def is_readable(path):

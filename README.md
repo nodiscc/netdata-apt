@@ -2,7 +2,7 @@
 
 ![](https://gitlab.com/nodiscc/toolbox/-/raw/master/DOC/SCREENSHOTS/QS3AbE3.png)
 
-This is a `python.d` plugin for [netdata](https://my-netdata.io/). It parses output from [python3-apt](https://manpages.debian.org/bullseye/apt/apt.8.en.html) and the `/etc/debian_version` file. It provides charts/alarms for:
+This is a `python.d` plugin for [netdata](https://my-netdata.io/). It parses output from [python3-apt](https://manpages.debian.org/bullseye/apt/apt.8.en.html) and the `/etc/debian_version` file (or `lsb_release` on Ubuntu). It provides charts/alarms for:
 - Number of upgradable packages: when no package upgrades are available, the `upgradable` chart will have a value of 0. A value constantly higher than 0, for a time longer than 24 hours, will raise a netdata alarm/notification.
 - The current distribution version: if the version (eg. `10`) is inferior to the configured/expected version (eg `12`), a netdata alarm/notification will be raised.
 
