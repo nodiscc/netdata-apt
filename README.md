@@ -1,5 +1,8 @@
 # netdata-apt
 
+> [!WARNING]
+> netdata is now proprietary software, this plugin will no longer be maintained. it is recommended to migrate to another monitoring stack based on victoriametrics or prometheus, and grafana for visualization. See https://github.com/nodiscc/toolbox/tree/master/ARCHIVE/ANSIBLE-COLLECTION/roles/netdata for more information. This repository will be archived.
+
 ![](https://gitlab.com/nodiscc/toolbox/-/raw/master/DOC/SCREENSHOTS/QS3AbE3.png)
 
 This is a `python.d` plugin for [netdata](https://my-netdata.io/). It parses output from [python3-apt](https://manpages.debian.org/bullseye/apt/apt.8.en.html) and the `/etc/debian_version` file (or `lsb_release` on Ubuntu). It provides charts/alarms for:
